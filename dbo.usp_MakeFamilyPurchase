@@ -1,0 +1,11 @@
+CREATE PROCEDURE usp_MakeFamilyPurchase 
+        @FamilySurName VARCHAR(255)
+AS 
+BEGIN TRY
+UPDATE dbo.Family
+        SET dbo.Family.BudgetValue = (Select SUM(dbo.Basket.Value) FROM dbo.Basket)
+        WHERE @FamilySurName = dbo.Family.SurName
+END TRY
+BEGIN CATCH
+        PRINT 'Ошибка. Такой семьи нет.'
+END CATCH;
