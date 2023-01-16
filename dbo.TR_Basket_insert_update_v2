@@ -1,0 +1,18 @@
+CREATE TRIGGER dbo.TR_Basket_insert_update
+ON dbo.Basket
+AFTER INSERT
+AS 
+BEGIN
+SELECT ID_SKU
+INTO #temp 
+FROM INSERTED 
+GROUP BY ID_SKU
+HAVING ( COUNT(*) > 1 )
+
+UPDATE dbo.Basket
+SET dbo.Basket.DiscountValue = iif(t.ID_SKU is null, 0, dbo.Basket.Value * 0.05 )
+FROM dbo.Basket 
+LEFT JOIN #temp as t
+ON t.ID_SKU = dbo.Basket.ID_SKU   
+END;
+
