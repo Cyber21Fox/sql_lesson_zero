@@ -5,17 +5,17 @@ AS
 DECLARE @COUNT_SKU INT
 DECLARE @ITER INT
 DECLARE cur CURSOR FOR 
-SELECT ID_SKU FROM INSERTED
+SELECT DISTINCT ID_SKU FROM INSERTED
 OPEN cur
 FETCH NEXT FROM cur INTO @ITER
-SET @COUNT_SKU = (SELECT COUNT(ID_SKU) FROM INSERTED)
+SET @COUNT_SKU = (SELECT COUNT(DISTINCT ID_SKU) FROM INSERTED)
 WHILE @COUNT_SKU >= 0
 BEGIN
   IF (SELECT COUNT(*) FROM INSERTED 
         WHERE @ITER = ID_SKU) >= 2
         BEGIN
           UPDATE dbo.Basket
-          SET dbo.Basket.DiscountValue = dbo.Basket.Value + dbo.Basket.Value * 0.05
+          SET dbo.Basket.DiscountValue = dbo.Basket.Value * 0.05
           WHERE @ITER = dbo.Basket.ID_SKU
           FETCH NEXT FROM cur INTO @ITER
         END
@@ -28,3 +28,5 @@ BEGIN
         END
   SET @COUNT_SKU = @COUNT_SKU - 1
 END
+CLOSE cur
+DEALLOCATE cur
