@@ -2,7 +2,7 @@ CREATE PROCEDURE usp_MakeFamilyPurchase
         @FamilySurName VARCHAR(255)
 AS 
 BEGIN
-	UPDATE dbo.Family
+    UPDATE dbo.Family
     SET dbo.Family.BudgetValue = (Select SUM(dbo.Basket.Value) FROM dbo.Basket)
     WHERE @FamilySurName = dbo.Family.SurName
     IF @@RowCount = 0 
